@@ -24,7 +24,7 @@ class CreateNewUser implements CreatesNewUsers
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
             'tipo_usuario' => ['required', 'integer', 'in:1,2,3'], // paciente, medico, admin
-            'telefone' => ['required', 'integer'], 
+            'telefone' => ['required', 'regex:/^\(\d{2}\)\s?\d{1}\s?\d{4}-\d{4}$/'], // formato (xx) 9 xxxx-xxxx
             'profile_photo' => ['nullable', 'image', 'max:2048'], 
         ])->validate();
 
@@ -34,13 +34,26 @@ class CreateNewUser implements CreatesNewUsers
             $photoPath = request()->file('profile_photo')->store('profile-photos', 'public');
         }
         
+        // Remove tudo que não é número
+        $telefoneNumeros = preg_replace('/\D/', '', $input['telefone']);
+
+        // Formata no padrão (xx) 9 xxxx-xxxx
+        $telefoneFormatado = sprintf(
+            '(%s) %s %s-%s',
+            substr($telefoneNumeros, 0, 2),    // DDD
+            substr($telefoneNumeros, 2, 1),    // Primeiro dígito
+            substr($telefoneNumeros, 3, 4),    // Quatro dígitos
+            substr($telefoneNumeros, 7, 4)     // Últimos quatro dígitos
+        );
+
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-            'tipo_usuario' =>  $input['tipo_usuario'],
-            'telefone' =>  $input['telefone'],
-            'profile_photo_path' => $photoPath, // <--- aqui
+            'tipo_usuario' => $input['tipo_usuario'],
+            'telefone' => $telefoneFormatado,
+            'profile_photo_path' => $photoPath,
         ]);
+
     }
 }

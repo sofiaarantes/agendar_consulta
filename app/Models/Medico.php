@@ -13,6 +13,7 @@ class Medico extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'status',
         'crm',
         'clinica',
         'especialidade_id',
@@ -37,12 +38,6 @@ class Medico extends Model
     public function consultas()
     {
         return $this->hasMany(Consulta::class, 'medico_id');
-    }
-
-    // Um médico pode ter vários relatórios
-    public function relatorios()
-    {
-        return $this->hasMany(Relatorio::class, 'medico_id');
     }
 
     // Um médico pertence a uma especialidade

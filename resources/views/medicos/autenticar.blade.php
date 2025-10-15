@@ -187,14 +187,14 @@
                                       <td>{{ $medico->usuario->name }}</td>
                                       <td>{{ $medico->usuario->email }}</td>
                                       <td>{{ $medico->usuario->telefone }}</td>
-                                      <td>{{ $medico->especialidade }}</td>
+                                      <td>{{ $medico->especialidade->especialidade }}</td>
                                       <td>{{ $medico->crm }}</td>
                                       <td>{{ $medico->clinica }}</td>
                                       <td>
                                         <form action="{{ route('medicos.aprovar') }}" method="POST" style="display:inline-block;" class="mb-1">
                                             @csrf
                                             <input type="hidden" name="medico_id" value="{{ $medico->id }}">
-                                            <input type="hidden" name="status" value="aprovado">
+                                            <input type="hidden" name="status" value="verificado">
                                             <button type="submit" class="btn btn-success btn-sm">
                                                 Aprovar
                                             </button>

@@ -43,14 +43,13 @@
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
-
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo ms-3 ps-3">
                     <a href="{{ route('dashboard') }}" class="app-brand-link">
                         <span class="app-brand-logo demo">
                         <img src="{{ asset('assets/img/logo.png') }}" alt="Logo AgendeFácil" width="40"></a>
                         </span>
-                    <span class="app-brand-text demo menu-text fw-bolder text-capitalize">AgendeFácil</span>
+                    <span class="app-brand-text demo menu-text fw-bolder text-capitalize"> Clinique</span>
                     </a>
                     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
                         <i class="bx bx-chevron-left bx-sm align-middle"></i>
@@ -68,29 +67,49 @@
                         </a>
                     </li>
 
+                    <!-- Médicos -->
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Médicos</span>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('pacientes.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-calendar"></i>
-                            Ver Médicos
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-pulse"></i>
+                            <div data-i18n="Layouts">Gerenciar Médicos</div>
+                        </a>
+
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="{{ route('medicos.autenticar') }}" class="menu-link">
+                                    Autenticar Médico
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('medicos.index') }}" class="menu-link">
+                                    Ver Médicos
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Pacientes -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Pacientes</span>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('pacientes.index')}}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            Gerenciar Pacientes
                         </a>
                     </li>
 
+                    <!-- Especialidades -->
                     <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Consultas</span>
+                        <span class="menu-header-text">Especialidades</span>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('consultas.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-group"></i>
-                            Minhas Consultas
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('consultas.historico') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            Histórico de Consultas
+                        <a href="{{ route('especialidades.index')}}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-book"></i>
+                            Gerenciar Especialidades
                         </a>
                     </li>
                     
@@ -135,7 +154,7 @@
 
                     <div class="card shadow-sm border-0">
                         <div class="card-body">
-                            <form action="{{ route('pacientes.update', $paciente->id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('users.update', $admin->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -144,8 +163,8 @@
                                     <label class="col-sm-2 col-form-label fw-semibold">Foto de Perfil</label>
                                     <div class="col-sm-10">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ $paciente->usuario->profile_photo_path 
-                                                        ? asset('storage/'.$paciente->usuario->profile_photo_path)
+                                            <img src="{{ $admin->profile_photo_path 
+                                                        ? asset('storage/'.$admin->profile_photo_path)
                                                         : asset('assets/img/foto_padrao.jpg') }}" 
                                                  alt="Foto de perfil"
                                                  class="rounded-circle me-3 border shadow-sm"
@@ -161,7 +180,7 @@
                                     <label class="col-sm-2 col-form-label fw-semibold">Nome</label>
                                     <div class="col-sm-10">
                                         <input type="text" name="nome" class="form-control" 
-                                               value="{{ old('nome', $paciente->usuario->name) }}" required>
+                                               value="{{ old('nome', $admin->name) }}" required>
                                     </div>
                                 </div>
 
@@ -170,7 +189,7 @@
                                     <label class="col-sm-2 col-form-label fw-semibold">Email</label>
                                     <div class="col-sm-10">
                                         <input type="email" name="email" class="form-control" 
-                                               value="{{ old('email', $paciente->usuario->email) }}" required>
+                                               value="{{ old('email', $admin->email) }}" required>
                                     </div>
                                 </div>
 
@@ -178,25 +197,7 @@
                                 <div class="row mb-3">
                                     <label class="col-sm-2 col-form-label" for="telefone">Telefone</label>
                                     <div class="col-sm-10">
-                                        <input type="text" id="telefone" name="telefone" class="form-control phone-mask" value="{{ old('telefone', $paciente->usuario->telefone) }}" />
-                                    </div>
-                                </div>
-
-                                {{-- ENDEREÇO --}}
-                                <div class="row mb-3">
-                                    <label class="col-sm-2 col-form-label fw-semibold">Endereço</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="endereco" class="form-control" 
-                                               value="{{ old('endereco', $paciente->endereco) }}" required>
-                                    </div>
-                                </div>
-
-                                {{-- DATA DE NASCIMENTO --}}
-                                <div class="row mb-3">
-                                    <label class="col-sm-2 col-form-label fw-semibold">Data de Nascimento</label>
-                                    <div class="col-sm-10">
-                                        <input type="date" name="data_nascimento" class="form-control" 
-                                               value="{{ old('data_nascimento', $paciente->data_nascimento) }}" required>
+                                        <input type="text" id="telefone" name="telefone" class="form-control phone-mask" value="{{ old('telefone', $admin->telefone) }}" />
                                     </div>
                                 </div>
 

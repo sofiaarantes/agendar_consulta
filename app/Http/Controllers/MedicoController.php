@@ -14,7 +14,7 @@ class MedicoController extends Controller
     {
         if(Auth::user()->tipo_usuario == 1){ // Paciente
             $especialidades = Especialidade::all();
-            $medicos = Medico::with('usuario')->get();
+            $medicos = Medico::where('status', 'verificado')->with('usuario')->get();
             return view('pacientes/medicos', compact('medicos', 'especialidades'));
         }
         else{ // Médico
@@ -135,7 +135,7 @@ class MedicoController extends Controller
     {
         $request->validate([
             'medico_id' => 'required|exists:medicos,id',
-            'status' => 'required|in:aprovado,rejeitado',
+            'status' => 'required|in:verificado,rejeitado',
         ]);
 
         $medico = Medico::findOrFail($request->medico_id);

@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EspecialidadeController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\UserController;
 use App\Models\Medico;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,9 @@ Route::middleware(['auth'])->group(function() {
 
     // Rotas para Agenda Médica
     Route::resource('agendas', AgendaMedicaController::class);
+
+    // Rotas para editar admins
+    Route::resource('users', UserController::class);
 
     // Rotas para Consultas
     Route::post('/consultas/marcar', [ConsultaController::class, 'marcar'])->name('consultas.marcar');

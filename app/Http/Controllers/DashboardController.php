@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Consulta;
+use App\Models\Especialidade;
+use App\Models\Medico;
 use App\Models\Notificacao;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -160,7 +163,25 @@ class DashboardController extends Controller
             ));
         } 
         else { // Administrador
-            return view('dashboardAdmin');
+            $mesSelecionado = $request->get('mes', now()->month);
+
+            $totalMedicos = User::where('tipo_usuario', '2')->count();
+            $totalPacientes = User::where('tipo_usuario', '1')->count();
+            $totalEspecialidades = Especialidade::count();
+            $medicosPendentes = Medico::where('status', 'pendente')->get();
+
+            $notificacoes = Notificacao::where('usuario_id', Auth::id())
+                ->orderByDesc('created_at')
+                ->take(10)
+                ->get();
+
+            return view('dashboardAdmin', compact(
+                'totalMedicos',
+                'totalPacientes',
+                'totalEspecialidades',
+                'medicosPendentes',
+                'notificacoes'
+            ));
         }
     }
 }

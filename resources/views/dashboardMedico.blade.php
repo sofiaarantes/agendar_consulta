@@ -152,7 +152,7 @@
                                     <li>
                                         <a class="dropdown-item" href="{{ route('medicos.edit', Auth::user()->medico->id)}}">
                                             <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">Meu Perfil</span>
+                                            <span class="align-middle">Editar Perfil</span>
                                         </a>
                                     </li>
                                     <li>
@@ -181,6 +181,30 @@
                     <!-- Content -->
 
                     <div class="container-xxl flex-grow-1 container-p-y">
+                        <!-- STATUS DO MÉDICO -->
+                        @php
+                            $statusMedico = Auth::user()->medico->status ?? null;
+                        @endphp
+
+                        @if($statusMedico === 'rejeitado')
+                            <div class="alert alert-danger d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Cadastro Rejeitado!</strong><br>
+                                    Seus dados foram rejeitados pela administração. Verifique suas informações e envie novamente.
+                                </div>
+                                <a href="{{ route('medicos.edit', Auth::user()->medico->id) }}" class="btn btn-sm btn-light border">
+                                    Corrigir Dados
+                                </a>
+                            </div>
+                        @elseif($statusMedico === 'pendente')
+                            <div class="alert alert-warning">
+                                <strong>Cadastro em Análise:</strong> Seus dados estão sendo verificados. Você será notificado quando o processo for concluído.
+                            </div>
+                        @elseif($statusMedico === 'verificado')
+                            <div class="alert alert-success">
+                                <strong>Cadastro Verificado!</strong> Seu perfil está ativo e você pode gerenciar suas consultas normalmente.
+                            </div>
+                        @endif
 
                         <h4 class="fw-bold mb-4">Dados do Mês</h4>
 
@@ -235,7 +259,11 @@
                                     </form>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="graficoConsultas" height="120"></canvas>
+                                    @if($temConsultas)
+                                        <canvas id="graficoConsultas" height="120"></canvas>
+                                    @else
+                                        <p class="text-muted mb-0">Nenhuma consulta realizada neste mês.</p>
+                                    @endif
                                 </div>
                             @else
                                 <div class="alert alert-info text-center mt-4">
@@ -361,31 +389,71 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+    @if($temConsultas)
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const ctx = document.getElementById('graficoConsultas').getContext('2d');
         new Chart(ctx, {
-            type: 'bar',
+            type: 'line', // Gráfico de linha
             data: {
-                labels: @json($labels ?? []),
+                labels: @json($labels), // Dias do mês
                 datasets: [{
-                    label: 'Consultas Realizadas',
-                    data: @json($dados ?? []),
-                    backgroundColor: 'rgba(105,108,255,0.5)',
-                    borderColor: '#696cff',
-                    borderWidth: 1
+                    label: 'Consultas realizadas',
+                    data: @json($dados),
+                    borderColor: '#007bff', // azul bonito
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    tension: 0.4, // deixa a linha suave (senoidal)
+                    fill: true,   // preenche levemente abaixo da linha
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#007bff'
                 }]
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        backgroundColor: '#fff',
+                        titleColor: '#000',
+                        bodyColor: '#000',
+                        borderColor: '#007bff',
+                        borderWidth: 1
+                    }
+                },
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Dias do mês',
+                            color: '#666',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
                     y: {
                         beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantidade de consultas realizadas',
+                            color: '#666',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
                         ticks: {
-                            // Mostra apenas números inteiros
-                            callback: function(value) {
-                                return Number.isInteger(value) ? value : null;
-                            },
                             stepSize: 1
                         }
                     }
@@ -393,5 +461,6 @@
             }
         });
     </script>
+    @endif
   </body>
 </html>

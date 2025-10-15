@@ -188,7 +188,7 @@
                                         <td>{{ $medico->usuario->name }}</td>
                                         <td>{{ $medico->usuario->email }}</td>
                                         <td>{{ $medico->usuario->telefone }}</td>
-                                        <td>{{ $medico->especialidade }}</td>
+                                        <td>{{ $medico->especialidade->especialidade }}</td>
                                         <td>{{ $medico->crm }}</td>
                                         <td>{{ $medico->clinica }}</td>
                                         <td>{{ $medico->status }}</td>

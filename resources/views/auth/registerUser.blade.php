@@ -39,7 +39,7 @@
                     <!-- Telefone -->
                     <div class="mt-4">
                         <x-label for="telefone" value="{{ __('Telefone') }}" />
-                        <x-input id="telefone" class="block mt-1 w-full" type="number" name="telefone" required />
+                        <x-input id="telefone" class="block mt-1 w-full" type="text" name="telefone" required />
                     </div>
 
                     <!-- Tipo de Usuário -->
@@ -78,4 +78,22 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const telefoneInput = document.getElementById('telefone');
+
+            telefoneInput.addEventListener('input', function(e) {
+                let x = telefoneInput.value.replace(/\D/g, '').slice(0, 11); // remove tudo que não é número e limita 11 dígitos
+                let formatted = '';
+
+                if(x.length > 0) formatted += '(' + x.substring(0, 2);          // DDD
+                if(x.length >= 3) formatted += ') ' + x.substring(2, 3);        // primeiro dígito do celular
+                if(x.length >= 4) formatted += ' ' + x.substring(3, 7);         // próximos 4 dígitos
+                if(x.length >= 8) formatted += '-' + x.substring(7, 11);        // últimos 4 dígitos
+
+                telefoneInput.value = formatted;
+            });
+        });
+        </script>
+
 </x-guest-layout>

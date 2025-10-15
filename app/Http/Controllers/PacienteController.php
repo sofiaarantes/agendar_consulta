@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Especialidade;
+use App\Models\Medico;
 use App\Models\Paciente;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -53,6 +55,7 @@ class PacienteController extends Controller
         $request->validate([
             'nome' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$usuario->id,
+            'telefone' => 'nullable|string|max:20',
             'endereco' => 'required|string|max:255',
             'data_nascimento' => 'required|date',
             'profile_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -60,6 +63,7 @@ class PacienteController extends Controller
 
         $usuario->name = $request->nome;
         $usuario->email = $request->email;
+        $usuario->telefone = $request->telefone;
 
         if ($request->hasFile('profile_photo')) {
             $path = $request->file('profile_photo')->store('profiles', 'public');
@@ -77,7 +81,7 @@ class PacienteController extends Controller
                         ->with('success', 'Perfil atualizado com sucesso!');
     }
 
-   public function destroy($id)
+    public function destroy($id)
     {
         $paciente = Paciente::findOrFail($id);
 
@@ -95,25 +99,25 @@ class PacienteController extends Controller
 
     public function buscar(Request $request)
     {
-        $name = $request->input('name');
-        $especialidade = $request->input('especialidade_id');
+        // Filtro básico
+        $query = Medico::where('status', 'verificado')->with('usuario', 'especialidade');
 
-        $query = \App\Models\Medico::with('usuario', 'especialidade');
-
-        if ($name) {
-            $query->whereHas('usuario', function ($q) use ($name) {
-                $q->where('name', 'like', "%$name%");
+        // Filtro por nome do médico
+        if ($request->filled('name')) {
+            $query->whereHas('usuario', function($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->name.'%');
             });
         }
 
-        if ($especialidade) {
-            $query->where('especialidade_id', $especialidade);
+        // Filtro por especialidade
+        if ($request->filled('especialidade_id')) {
+            $query->where('especialidade_id', $request->especialidade_id);
         }
 
         $medicos = $query->get();
-        $especialidades = \App\Models\Especialidade::all();
+        $especialidades = Especialidade::all();
 
-        return view('pacientes.medicos', compact('medicos', 'especialidades'));
+        return view('pacientes/medicos', compact('medicos', 'especialidades'));
     }
 
 }

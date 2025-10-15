@@ -194,3 +194,23 @@ class ConsultaController extends Controller
     }
 
 }
+
+
+
+                        // <!-- Gráfico -->
+                        // <div class="row mb-4">
+                        //     <div class="col-lg-12">
+                        //         <div class="card shadow-sm border-0 mt-4">
+                        //             <div class="card-header">
+                        //                 <h5 class="mb-0">Consultas realizadas por dia</h5>
+                        //             </div>
+                        //             <div class="card-body">
+                        //                 @if($temConsultas)
+                        //                     <canvas id="graficoConsultas" height="120"></canvas>
+                        //                 @else
+                        //                     <p class="text-muted mb-0">Nenhuma consulta realizada neste mês.</p>
+                        //                 @endif
+                        //             </div>
+                        //         </div>
+                        //     </div>
+                        // </div>
